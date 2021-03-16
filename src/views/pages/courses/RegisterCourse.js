@@ -55,7 +55,9 @@ const RegisterCourse = () => {
 
       })
       .catch(error => {
-        console.log(error);
+        toast.error("Ocorreu um erro com o servidor!", {
+          autoClose: 3000,
+        });
       })
   }
 
@@ -79,7 +81,7 @@ const RegisterCourse = () => {
         <Row>
           <Col className="order-xl-1" xl="11">
             <Card className="bg-secondary shadow">
-  
+
               <CardBody>
                 <Form onSubmit={handleSubmit}>
                   <h6 className="heading-small text-muted mb-4 pl-4">

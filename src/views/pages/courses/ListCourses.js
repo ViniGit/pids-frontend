@@ -37,7 +37,11 @@ import Header from "components/Headers/UserHeader.js";
 
 const ListCourses = () => {
 
+  const [modal, setModal] = useState(false);
 
+  const [course, setCourse] = useState({});
+
+  const history = useHistory();
 
   const [courses, setCourses] = useState([]);
 
@@ -47,11 +51,7 @@ const ListCourses = () => {
     })
   }, []);
 
-  const [modal, setModal] = useState(false);
 
-  const [course, setCourse] = useState({});
-
-  const history = useHistory();
 
   const toggle = (course) => {
     setModal(!modal);

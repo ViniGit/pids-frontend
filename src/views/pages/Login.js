@@ -120,7 +120,7 @@ const Login = () => {
           <Col className="text-right" xs="12">
             <a
               className="text-light"
-              href="#pablo"
+              href="/auth/register"
               onClick={(e) => e.preventDefault()}
             >
               <small>Cadastrar-se</small>
