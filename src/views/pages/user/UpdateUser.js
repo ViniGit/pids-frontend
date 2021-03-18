@@ -404,13 +404,21 @@ const UpdateUser = (props) => {
                    </Row>
 
 
+                  <div>       
+
                     <Button className="mt-4" color="primary" type="submit" onClick={handleSubmit}>
                       Atualizar
                     </Button>
 
+                    
+                    <Button className="mt-4" color="danger" type="submit" onClick={() => history.push('/admin/list-users')}>
+                      Cancelar
+                    </Button>
+                  </div>
+
+                    </div>
                     <ToastContainer />
 
-                  </div>
 
                 </Form>
               </CardBody>

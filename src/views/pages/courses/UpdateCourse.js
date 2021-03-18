@@ -116,11 +116,14 @@ const UpdateCourse = (props) => {
 
                       </Col>
                     </Row>
-
-                    <Button className="mt-4" color="primary" type="submit" onClick={handleSubmit} >
-                      Atualizar
+                    <div>
+                      <Button className="mt-4" color="primary" type="submit" onClick={handleSubmit} >
+                        Atualizar
                     </Button>
-
+                      <Button className="mt-4" color="danger" type="submit" onClick={() => history.push('/admin/list-courses')}>
+                        Cancelar
+                    </Button>
+                    </div>
                     <ToastContainer />
 
                   </div>

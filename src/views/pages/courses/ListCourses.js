@@ -96,7 +96,7 @@ const ListCourses = () => {
         </ModalBody>
           <ModalFooter>
             <Button color="primary" onClick={() => { deletar(course) }}>Confirmar</Button>
-            <Button color="secondary" onClick={toggle}>Cancelar</Button>
+            <Button color="danger" onClick={toggle}>Cancelar</Button>
           </ModalFooter>
         </Modal>
       </div>
