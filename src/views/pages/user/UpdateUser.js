@@ -122,7 +122,6 @@ const UpdateUser = (props) => {
 
     await api.put(`users/${props.location.userData.id}`, user)
       .then(response => {
-        console.log(response.data);
         if (response.status == 200) {
           toast.success("Atualização realizada com sucesso!", {
             onClose: () => history.push('/admin/list-users'),
