@@ -78,15 +78,15 @@ const UpdateUser = (props) => {
     password: Yup
       .string()
       .min(6, 'Senha deve possuir no mínimo 6 caracteres!')
-      .required('Digite sua senha!'),
+      .notRequired(),
 
     password_confirmation: Yup
       .string()
       .min(6, 'Senha deve possuir no mínimo 6 caracteres!')
       .equals([Yup.ref('password')], 'Senhas devem ser iguais!')
-      .required('Confirme sua senha!'),
+      .notRequired(),
 
-    course_id: Yup
+      course_id: Yup
       .string()
       .required("Campo Obrigatório!"),
 

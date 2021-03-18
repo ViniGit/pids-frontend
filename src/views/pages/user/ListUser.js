@@ -73,16 +73,14 @@ const ListUser = () => {
 
   async function deletar(user) {
 
-
+    var id = user.id;
     setModal(!modal);
     await api.delete(`users/${user.id}`).
       then(response => {
         console.log(response.status);
         if (response.status == 204) {
-          toast.success("Registro inativado com sucesso!", {
-            onClose: () => { window.location.reload() },
-            autoClose: 3000,
-          });
+          toast.success("Registro inativado com sucesso!", { autoClose: 3000 });
+          setUsers(users.filter(u => { return u.id != id}))
         }
       })
   }

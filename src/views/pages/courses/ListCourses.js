@@ -60,16 +60,14 @@ const ListCourses = () => {
   };
 
   async function deletar(course) {
-
+    var id = course.id;
     setModal(!modal);
     await api.delete(`courses/${course.id}`).
       then(response => {
         console.log(response.status);
         if (response.status == 204) {
-          toast.success("Registro inativado com sucesso!", {
-            onClose: () => { window.location.reload() },
-            autoClose: 3000,
-          });
+          toast.success("Registro inativado com sucesso!", { autoClose: 3000,});
+          setCourses(courses.filter(u => { return u.id != id}))
         }
       })
 
