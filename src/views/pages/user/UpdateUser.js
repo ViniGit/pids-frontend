@@ -329,7 +329,7 @@ const UpdateUser = (props) => {
                           </label>
                           <Input
                             className="form-control-alternative"
-                            id="bond-name"
+                            id="bond"
                             type="select"
                             onChange={handleChange}
                             name="bond_id"
@@ -356,10 +356,10 @@ const UpdateUser = (props) => {
                           </label>
                           <Input
                             className="form-control-alternative"
-                            id="course_id"
+                            id="course"
                             type="select"
                             onChange={handleChange}
-                            name="role_id"
+                            name="course_id"
                           >
 
                             <option value="0">Selecione o Curso</option>
@@ -386,7 +386,7 @@ const UpdateUser = (props) => {
                           </label>
                           <Input
                             className="form-control-alternative"
-                            id="bond-name"
+                            id="role"
                             type="select"
                             onChange={handleChange}
                             name="role_id"
