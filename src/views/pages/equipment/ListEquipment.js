@@ -1,5 +1,11 @@
 
-import React from "react";
+import React, { useEffect, useState } from 'react';
+import { Link, useHistory } from 'react-router-dom';
+import { useFormik } from 'formik';
+import * as Yup from "yup";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import api from '../../../services/api';
 import {
   Badge,
   Card,
@@ -18,23 +24,87 @@ import {
   Container,
   Row,
   UncontrolledTooltip,
+  Button,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter
 } from "reactstrap";
 // core components
 import Header from "components/Headers/UserHeader.js";
-function deletar(e) {
-  e.preventDefault();
-  if (window.confirm("Deseja realmente excluir esse registro?")) {
-    alert("Registro Excluído!");
+import getToken from 'functions/getToken';
+
+
+
+const ListEquipment = () => {
+
+  const [modal, setModal] = useState(false);
+
+  const [equipment, setEquipment] = useState({});
+
+  const history = useHistory();
+
+  const [equipments, setEquipments] = useState([]);
+
+  const config = getToken();
+
+  useEffect(() => {
+    api.get('equipments', config).then(response => {
+      setEquipments(response.data);
+    })
+  }, []);
+
+
+
+  const toggle = (equipment) => {
+    setModal(!modal);
+    setEquipment(equipment);
+
+  };
+
+  async function deletar(equipment) {
+
+    var id = equipment.id;
+    setModal(!modal);
+    await api.delete(`equipments/${equipment.id}`, config).
+      then(response => {
+        if (response.status == 204) {
+          toast.success("Registro inativado com sucesso!", { autoClose: 3000, });
+          setEquipments(equipments.filter(u => { return u.id != id }))
+        }
+      })
+
+
   }
 
+  function editEquipment(equipment) {
 
-}
-const ListEquipment = () => {
+    history.push({
+      pathname: `/admin/update-equipment/${equipment.id}`,
+      // equipmentData: equipment
+    });
+
+  }
+
   return (
     <>
+      <div>
+        <Modal isOpen={modal} toggle={toggle} className="">
+
+          <ModalHeader toggle={toggle}></ModalHeader>
+          <ModalBody>
+            Tem certeza que deseja Inativar os dados desse Equipamento?
+        </ModalBody>
+          <ModalFooter>
+            <Button color="primary" onClick={() => { deletar(equipment) }}>Confirmar</Button>
+            <Button color="danger" onClick={toggle}>Cancelar</Button>
+          </ModalFooter>
+        </Modal>
+      </div>
       <Header />
       {/* Page content */}
       <Container className="mt--7" fluid>
+
         {/* Table */}
         <Row>
           <div className="col">
@@ -51,93 +121,54 @@ const ListEquipment = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <th scope="row">
-                      <Media>
-                        <span className="mb-0 text-sm">
-                          Projetor
-                          </span>
-                      </Media>
-                    </th>
-                    <td>Projetor 3300 Lumens, HDMI +VGA</td>
-                    
-                    <td className="text-right">
-                      <UncontrolledDropdown>
-                        <DropdownToggle
-                          className="btn-icon-only text-light"
-                          href="#pablo"
-                          role="button"
-                          size="sm"
-                          color=""
-                          onClick={(e) => e.preventDefault()}
-                        >
-                          <i className="fas fa-ellipsis-v" />
-                        </DropdownToggle>
-                        <DropdownMenu className="dropdown-menu-arrow" right>
-                          <DropdownItem
-                            href="#pablo"
-                            onClick={(e) => e.preventDefault()}
-                          >
-                            Editar
+                  {
+                    equipments.map(equipment => (
+                      <tr>
+                        <th scope="row">
+                          <Media>
+                            <span className="mb-0 text-sm">
+                              {equipment.name}
+                            </span>
+                          </Media>
+                        </th>
+                        <th scope="row">
+                          <Media>
+                            <span className="mb-0 text-sm">
+                              {equipment.description}
+                            </span>
+                          </Media>
+                        </th>
+
+                        <td className="text-right">
+                          <UncontrolledDropdown>
+                            <DropdownToggle
+                              className="btn-icon-only text-light"
+                              role="button"
+                              size="sm"
+                              color=""
+                              onClick={(e) => e.preventDefault()}
+                            >
+                              <i className="fas fa-ellipsis-v" />
+                            </DropdownToggle>
+                            <DropdownMenu className="dropdown-menu-arrow" right>
+                              <DropdownItem
+                                onClick={() => editEquipment(equipment)}
+                              >
+                                Editar
                           </DropdownItem>
-                          <DropdownItem
-                            href="#pablo"
-                            onClick={(e) => deletar(e)}
+                              <DropdownItem
+                                onClick={() => toggle(equipment)}
 
-                          >
-                            Inativar
-                          </DropdownItem>
-
-                        </DropdownMenu>
-                      </UncontrolledDropdown>
-                    </td>
-                  </tr>
-
-
-                  <tr>
-                    <th scope="row">
-                      <Media>
-                        <span className="mb-0 text-sm">
-                          Monitor
-                          </span>
-                      </Media>
-                    </th>
-                    <td>Monitor Full HD 4k</td>
-                    
-                    <td className="text-right">
-                      <UncontrolledDropdown>
-                        <DropdownToggle
-                          className="btn-icon-only text-light"
-                          href="#pablo"
-                          role="button"
-                          size="sm"
-                          color=""
-                          onClick={(e) => e.preventDefault()}
-                        >
-                          <i className="fas fa-ellipsis-v" />
-                        </DropdownToggle>
-                        <DropdownMenu className="dropdown-menu-arrow" right>
-                          <DropdownItem
-                            href="#pablo"
-                            onClick={(e) => e.preventDefault()}
-                          >
-                            Editar
-                          </DropdownItem>
-                          <DropdownItem
-                            href="#pablo"
-                            onClick={(e) => deletar(e)}
-
-                          >
-                            Inativar
+                              >
+                                Inativar
                           </DropdownItem>
 
-                        </DropdownMenu>
-                      </UncontrolledDropdown>
-                    </td>
-                  </tr>   
-
-
-
+                            </DropdownMenu>
+                          </UncontrolledDropdown>
+                        </td>
+                      </tr>
+                    ))
+                  }
 
                 </tbody>
               </Table>
@@ -159,7 +190,6 @@ const ListEquipment = () => {
                     </PaginationItem>
                     <PaginationItem className="active">
                       <PaginationLink
-                        href="#pablo"
                         onClick={(e) => e.preventDefault()}
                       >
                         1
@@ -183,7 +213,6 @@ const ListEquipment = () => {
                     </PaginationItem>
                     <PaginationItem>
                       <PaginationLink
-                        href="#pablo"
                         onClick={(e) => e.preventDefault()}
                       >
                         <i className="fas fa-angle-right" />
@@ -194,6 +223,8 @@ const ListEquipment = () => {
                 </nav>
               </CardFooter>
             </Card>
+            <ToastContainer />
+
           </div>
         </Row>
         {/* Dark table */}

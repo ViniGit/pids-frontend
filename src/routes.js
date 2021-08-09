@@ -1,5 +1,6 @@
 
 import Index from "views/Index.js";
+
 import RegisterUser from "views/pages/user/RegisterUser.js";
 import ListUser from "views/pages/user/ListUser.js";
 import UpdateUser from "views/pages/user/UpdateUser.js";
@@ -24,12 +25,13 @@ import UpdateCourt from "views/pages/court/UpdateCourt.js";
 
 import Register from "views/pages/Register.js";
 import Login from "views/pages/Login.js";
+import ForgotPassWord from "views/pages/ForgotPassword";
 import Icons from "views/pages/Icons.js";
 
 var routes = [
   {
     path: "/index",
-    name: "Dashboard",
+    name: "Home",
     icon: "ni ni-tv-2 text-ueg",
     component: Index,
     layout: "/admin",
@@ -114,6 +116,7 @@ var routes = [
     icon: "ni ni-shop text-warning",
     component: RegisterRoom,
     layout: "/admin",
+    show: true
   },
 
   {
@@ -122,6 +125,8 @@ var routes = [
     icon: "ni ni-bullet-list-67 text-warning",
     component: ListRooms,
     layout: "/admin",
+    show: true
+
   },
   {
     path: "/update-room",
@@ -129,6 +134,7 @@ var routes = [
     icon: "ni ni-bullet-list-67 text-green",
     component: UpdateRoom,
     layout: "/admin",
+
   },
 
 
@@ -138,6 +144,7 @@ var routes = [
     icon: "ni ni-shop text-warning",
     component: RegisterCourt,
     layout: "/admin",
+    show: true
   },
 
   {
@@ -146,6 +153,8 @@ var routes = [
     icon: "ni ni-bullet-list-67 text-warning",
     component: ListCourt,
     layout: "/admin",
+    show: true
+
   },
   {
     path: "/update-court",
@@ -161,6 +170,7 @@ var routes = [
     icon: "ni ni-tv-2 text-green",
     component: RegisterEquipment,
     layout: "/admin",
+    show: true
   },
 
   {
@@ -169,6 +179,8 @@ var routes = [
     icon: "ni ni-bullet-list-67 text-green",
     component: ListEquipment,
     layout: "/admin",
+    show: true
+
   },
   {
     path: "/update-equipment",
@@ -185,12 +197,21 @@ var routes = [
     icon: "ni ni-key-25 text-info",
     component: Login,
     layout: "/auth",
+    show: false
   },
   {
     path: "/register",
     name: "Register",
     icon: "ni ni-circle-08 text-pink",
     component: Register,
+    layout: "/auth",
+  },
+
+  {
+    path: "/forgot-password",
+    name: "Recuperar Senha",
+    icon: "ni ni-circle-08 text-pink",
+    component: ForgotPassWord,
     layout: "/auth",
   },
 ];

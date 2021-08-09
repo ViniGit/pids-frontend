@@ -9,6 +9,7 @@ import api from '../../../services/api';
 
 import UpdateUser from 'views/pages/user/UpdateUser';
 
+import getToken from '../../../functions/getToken';
 
 // reactstrap components
 import {
@@ -37,6 +38,7 @@ import {
 } from "reactstrap";
 // core components
 import Header from "components/Headers/UserHeader.js";
+import { error } from 'jquery';
 
 
 const ListUser = () => {
@@ -56,32 +58,38 @@ const ListUser = () => {
   const history = useHistory();
 
   useEffect(() => {
-    api.get('users').then(response => {
+    // const token = localStorage.getItem('@EReserva:token');
+
+    const config = getToken();
+
+    api.get('/users', config).then(response => {
       setUsers(response.data);
-      console.log(response.data);
     })
   }, [])
 
-  function editUser(obj) {
+  function editUser(user) {
 
     history.push({
-      pathname: '/admin/update-user',
-      userData: obj
+      pathname: `/admin/update-user/${user.id}`,
+      userData: user
     });
 
   }
 
   async function deletar(user) {
 
+    const config = getToken();
     var id = user.id;
     setModal(!modal);
-    await api.delete(`users/${user.id}`).
+    await api.delete(`users/${user.id}`, config).
       then(response => {
-        console.log(response.status);
         if (response.status == 204) {
           toast.success("Registro inativado com sucesso!", { autoClose: 3000 });
-          setUsers(users.filter(u => { return u.id != id}))
+          setUsers(users.filter(u => { return u.id != id }))
         }
+
+      }).catch(error => {
+        toast.error("Error!", { autoClose: 3000 });
       })
   }
   return (
@@ -146,13 +154,13 @@ const ListUser = () => {
                         <td>
                           {user.courses.map(course => (
                             course.name
-                          ))}{/* errado */}
+                          ))}
                         </td>
                         <td>
-                          {user.bonds.name}
+                          {user.bond.name}
                         </td>
                         <td>
-                          {user.roles.name}
+                          {user.role.name}
                         </td>
 
                         <td className="text-right">
@@ -173,7 +181,6 @@ const ListUser = () => {
                                 Editar
                               </DropdownItem>
                               <DropdownItem
-                                href="#pablo"
                                 onClick={(e) => toggle(user)}
 
                               >

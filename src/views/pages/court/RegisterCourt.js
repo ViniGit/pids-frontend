@@ -1,22 +1,10 @@
-/*!
-
-=========================================================
-* Argon Dashboard React - v1.2.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/argon-dashboard-react
-* Copyright 2021 Creative Tim (https://www.creative-tim.com)
-* Licensed under MIT (https://github.com/creativetimofficial/argon-dashboard-react/blob/master/LICENSE.md)
-
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
-import React from "react";
-
+import React, { useEffect, useState } from 'react';
+import { Link, useHistory } from 'react-router-dom';
+import { useFormik } from 'formik';
+import * as Yup from "yup";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import api from '../../../services/api';
 // reactstrap components
 import {
   Button,
@@ -32,82 +20,132 @@ import {
 } from "reactstrap";
 // core components
 import UserHeader from "components/Headers/UserHeader.js";
+import getToken from 'functions/getToken';
 
 const RegisterCourt = () => {
+
+  const [courts, setCourts] = useState([]);
+
+  const history = useHistory();
+
+  const config = getToken();
+
+  const validationSchema = Yup.object({
+
+    name: Yup
+      .string()
+      .required("Campo Obrigatório!"),
+    description: Yup
+      .string()
+      .required("Campo Obrigatório!")
+
+  })
+
+  async function handleSubmitt(values) {
+
+
+    const court = {
+      name: values.name,
+      description: values.description,
+
+    }
+
+    await api.post('sportCourts', court, config)
+      .then(response => {
+        if (response.status == 201) {
+          toast.success("Quadra cadastrada com sucesso!", {
+            onClose: () => history.push('/admin/list-court'),
+            autoClose: 2000,
+          });
+        }
+
+      })
+      .catch(error => {
+        toast.error("Ocorreu um erro ao cadastrar a quadra.", {
+          onClose: () => { },
+          autoClose: 3000,
+        });
+      })
+  }
+
+  const { handleSubmit, handleChange, values, errors, touched } = useFormik({
+    initialValues: {
+      name: "",
+      description: "",
+    },
+
+    validationSchema,
+    onSubmit(values) {
+      handleSubmitt(values)
+    },
+
+  })
+
   return (
     <>
       <UserHeader />
       {/* Page content */}
       <Container className="mt--7" fluid>
         <Row>
-
           <Col className="order-xl-1" xl="11">
             <Card className="bg-secondary shadow">
-              <CardHeader className="bg-white border-0">
-                <Row className="align-items-center">
-                  <Col xs="8">
-                    {/* <h3 className="mb-0">Cadastro de Usuário</h3> */}
-                  </Col>
 
-                </Row>
-              </CardHeader>
               <CardBody>
-                <Form>
-                  <h6 className="heading-small text-muted mb-4">
+                <Form onSubmit={handleSubmit}>
+                  <h6 className="heading-small text-muted mb-4 pl-4">
                     Informações da Quadra
                   </h6>
                   <div className="pl-lg-4">
                     <Row>
-                      <Col lg="8">
+                      <Col lg="9">
                         <FormGroup>
                           <label
                             className="form-control-label"
-                            htmlFor="input-username"
+                            htmlFor="input-course-name"
                           >
                             Nome
                           </label>
                           <Input
                             className="form-control-alternative"
                             defaultValue=""
-                            id="input-username"
+                            id="input-course-name"
                             placeholder=""
                             type="text"
+                            onChange={handleChange}
+                            name="name"
                           />
                         </FormGroup>
+                        {touched.name && errors.name ? <p className="mt-2 text-warning">{errors.name}</p> : null}
+
                       </Col>
-
-
-
-                      <Col lg="8">
+                      <Col lg="9">
                         <FormGroup>
                           <label
                             className="form-control-label"
-                            htmlFor="input-username"
+                            htmlFor="input-course-name"
                           >
                             Descrição
                           </label>
                           <Input
                             className="form-control-alternative"
                             defaultValue=""
-                            id="input-username"
+                            id="input-course-description"
                             placeholder=""
                             type="text"
+                            onChange={handleChange}
+                            name="description"
                           />
                         </FormGroup>
+                        {touched.description && errors.description ? <p className="mt-2 text-warning">{errors.description}</p> : null}
+
                       </Col>
-
-
                     </Row>
 
-
-
-
-
-
-
-                    <Button className="mt-4" color="primary" type="button">
+                    <Button className="mt-4" color="primary" type="submit" onClick={handleSubmit} >
                       Cadastrar
                     </Button>
+
+                    <ToastContainer />
 
                   </div>
 

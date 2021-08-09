@@ -24,42 +24,57 @@ import {
 } from "reactstrap";
 // core components
 import UserHeader from "components/Headers/UserHeader.js";
+import getToken from 'functions/getToken';
 
 const UpdateUser = (props) => {
 
-  useEffect(() => {
-    // console.log("PROPIS");
-    // console.log(typeof(props.location.userData.course[0].id));
-  })
+  const [user, setUser] = useState([]);
+  const [bond1, setBond] = useState([]);
+  const [role1, setRole] = useState([]);
+  const [course1, setCourse] = useState([]);
 
-  const [selectedBond, setSelectedBond] = useState([]);
-  const [selectedCourse, setSelectedCourse] = useState([]);
+
+
   const [roles, setRoles] = useState([]);
   const [bonds, setBonds] = useState([]);
   const [courses, setCourses] = useState([]);
 
+  const config = getToken();
 
   const history = useHistory();
 
   useEffect(() => {
-    api.get('roles').then(response => {
+
+    const url = props.location.pathname.split("/"); //posição 3 do array se encontra o id do equipamento
+
+    api.get(`/users/${url[3]}`, config).then(response => {
+
+      setUser(response.data);
+      setBond(response.data.bond);
+      setRole(response.data.role);
+      setCourse(response.data.courses[0]);
+    });
+
+
+  }, []);
+
+  useEffect(() => {
+    api.get('roles', config).then(response => {
       setRoles(response.data);
     })
   }, []);
 
   useEffect(() => {
-    api.get('bonds').then(response => {
+    api.get('bonds', config).then(response => {
       setBonds(response.data);
     })
   }, []);
 
   useEffect(() => {
-    api.get('courses').then(response => {
+    api.get('courses', config).then(response => {
       setCourses(response.data);
     })
   }, []);
-
-  const notifySuccess = () => toast.success("Usuário cadastrado com sucesso!");
 
   const validationSchema = Yup.object({
     name: Yup
@@ -68,59 +83,57 @@ const UpdateUser = (props) => {
 
     cpf: Yup
       .string()
-      .test('cpf valido', 'Cpf Não é válido', value => isValidCpf(value))
+      .test('cpf valido', 'CPF inválido!', value => isValidCpf(value))
       .required("Campo Obrigatório!"),
 
     email: Yup
       .string()
       .email("E-mail Inválido!").required("Campo Obrigatório!"),
 
-    password: Yup
-      .string()
-      .min(6, 'Senha deve possuir no mínimo 6 caracteres!')
-      .notRequired(),
+    // password: Yup
+    //   .string()
+    //   .min(6, 'Senha deve possuir no mínimo 6 caracteres!')
+    //   .notRequired(),
 
-    password_confirmation: Yup
-      .string()
-      .min(6, 'Senha deve possuir no mínimo 6 caracteres!')
-      .equals([Yup.ref('password')], 'Senhas devem ser iguais!')
-      .notRequired(),
+    // password_confirmation: Yup
+    //   .string()
+    //   .min(6, 'Senha deve possuir no mínimo 6 caracteres!')
+    //   .equals([Yup.ref('password')], 'Senhas devem ser iguais!')
+    //   .notRequired(),
 
-      course_id: Yup
+    courseId: Yup
       .string()
       .required("Campo Obrigatório!"),
 
-    bond_id: Yup
+    bondId: Yup
+      .string()
+      .required("Campo Obrigatório!"),
+
+    roleId: Yup
       .string()
       .required("Campo Obrigatório!"),
 
     phone: Yup
       .string()
       .required("Campo Obrigatório!"),
-      
-      role_id: Yup
-      .string()
-      .required("Campo Obrigatório!"),
-
-
   });
 
   async function handleSubmitt(values) {
-    const { name, email, cpf, password, bond_id, course_id, phone, role_id } = values;
+    const { name, email, cpf, bondId, courseId, phone, roleId } = values;
 
-    const user = {
+    const data = {
       name,
       email,
       cpf,
-      password,
-      bond_id: parseInt(bond_id),
-      course_id: parseInt(course_id),
-      role_id: parseInt(role_id),
+      // password,
+      bondId,
+      courseId,
+      roleId,
       phone
     }
 
 
-    await api.put(`users/${props.location.userData.id}`, user)
+    await api.put(`/users/${user.id}`, data, config)
       .then(response => {
         if (response.status == 200) {
           toast.success("Atualização realizada com sucesso!", {
@@ -131,29 +144,29 @@ const UpdateUser = (props) => {
 
       })
       .catch(errors => {
-        console.log(errors);
-        // if (errors == 400) {
-        //   toast.success("Erro ao criar usuário!", {
-        //     autoClose: 3000,
-        //   });
-        // }
+        toast.warning("Erro ao atualizar usuário!", {
+          autoClose: 3000,
+        });
       });
 
   }
 
-  const { handleSubmit, handleChange, values, errors } = useFormik({
-    initialValues: {
-      name: props.location.userData.name,
-      cpf: props.location.userData.cpf,
-      email: props.location.userData.email,
-      phone: props.location.userData.phone,
-      password: "",
-      password_confirmation: "",
-      bond_id: parseInt(props.location.userData.bonds.id),
-      course_id: parseInt(props.location.userData.courses[0].id),
-      role_id: parseInt(props.location.userData.roles.id),
+  const { handleSubmit, handleChange, values, errors, touched } = useFormik({
 
+    initialValues: {
+      name: user.name,
+      cpf: user.cpf,
+      email: user.email,
+      bondId: bond1.id,
+      courseId: course1.id,
+      roleId: role1.id,
+      phone: user.phone,
+      // password: "",
+      // password_confirmation: "",
     },
+
+    enableReinitialize: true,
+
     validationSchema,
     onSubmit(values) {
       handleSubmitt(values);
@@ -190,14 +203,14 @@ const UpdateUser = (props) => {
 
                           <Input
                             className="form-control-alternative"
-                            defaultValue={props.location.userData.name}
+                            defaultValue={user.name}
                             id="input-username"
                             placeholder=""
                             type="text"
                             onChange={handleChange}
                             name="name"
                           />
-                          {errors.name ? <p className="mt-2 text-warning">{errors.name}</p> : null}
+                          {touched.name && errors.name ? <p className="mt-2 text-warning">{errors.name}</p> : null}
                         </FormGroup>
                       </Col>
 
@@ -211,14 +224,14 @@ const UpdateUser = (props) => {
                           </label>
                           <Input
                             className="form-control-alternative"
-                            defaultValue={props.location.userData.cpf}
+                            defaultValue={user.cpf}
                             id="input-username"
                             placeholder=""
                             type="text"
                             onChange={handleChange}
                             name="cpf"
                           />
-                          {errors.cpf ? <p className="mt-2 text-warning">{errors.cpf}</p> : null}
+                          {touched.cpf && errors.cpf ? <p className="mt-2 text-warning">{errors.cpf}</p> : null}
                         </FormGroup>
                       </Col>
 
@@ -233,7 +246,7 @@ const UpdateUser = (props) => {
                           </label>
                           <Input
                             className="form-control-alternative"
-                            defaultValue={props.location.userData.email}
+                            defaultValue={user.email}
                             id="input-email"
                             placeholder="admin@example.com"
                             type="email"
@@ -241,7 +254,7 @@ const UpdateUser = (props) => {
                             name="email"
                           />
                         </FormGroup>
-                        {errors.email ? <p className="mt-2 text-warning">{errors.email}</p> : null}
+                        {touched.email && errors.email ? <p className="mt-2 text-warning">{errors.email}</p> : null}
 
                       </Col>
 
@@ -255,7 +268,7 @@ const UpdateUser = (props) => {
                           </label>
                           <Input
                             className="form-control-alternative"
-                            defaultValue={props.location.userData.phone}
+                            defaultValue={user.phone}
                             id="input-email"
                             placeholder="(62) 9 9999-9999"
                             type="text"
@@ -263,14 +276,14 @@ const UpdateUser = (props) => {
                             name="phone"
                           />
                         </FormGroup>
-                        {errors.phone ? <p className="mt-2 text-warning">{errors.phone}</p> : null}
+                        {touched.phone && errors.phone ? <p className="mt-2 text-warning">{errors.phone}</p> : null}
 
                       </Col>
                     </Row>
 
 
 
-                    <Row>
+                    {/* <Row>
                       <Col lg="4">
                         <FormGroup>
                           <label
@@ -315,7 +328,7 @@ const UpdateUser = (props) => {
 
                         </FormGroup>
                       </Col>
-                    </Row>
+                    </Row> */}
 
 
                     <Row>
@@ -329,19 +342,19 @@ const UpdateUser = (props) => {
                           </label>
                           <Input
                             className="form-control-alternative"
-                            id="bond"
+                            id="bondId"
                             type="select"
                             onChange={handleChange}
-                            name="bond_id"
+                            name="bondId"
                           >
                             <option value="0">Selecione uma Função</option>
 
                             {bonds.map(bond => (
-                              bond.id === props.location.userData.bond_id ? <option key={bond.id} selected value={parseInt(bond.id)}>{bond.name}</option>:<option key={bond.id} value={parseInt(bond.id)}>{bond.name}</option>
+                              bond.id === bond1.id ? <option key={bond.id} selected value={bond.id}>{bond.name}</option> : <option key={bond.id} value={bond.id}>{bond.name}</option>
                             ))}
 
                           </Input>
-                          {errors.bond_id ? <p className="mt-2 text-warning">{errors.bond_id}</p> : null}
+                          {touched.bondId && errors.bondId ? <p className="mt-2 text-warning">{errors.bondId}</p> : null}
 
                         </FormGroup>
                       </Col>
@@ -352,24 +365,24 @@ const UpdateUser = (props) => {
                             htmlFor="input-last-name"
                           >
                             Curso
-                            
+
                           </label>
                           <Input
                             className="form-control-alternative"
-                            id="course"
+                            id="courseId"
                             type="select"
                             onChange={handleChange}
-                            name="course_id"
+                            name="courseId"
                           >
 
                             <option value="0">Selecione o Curso</option>
 
                             {courses.map(course => (
-                              course.id === props.location.userData.courses[0].id ? <option key={course.id} selected value={course.id}>{course.name}</option>:<option key={course.id} value={course.id}>{course.name}</option>
+                              course.id === course1.id ? <option key={course.id} selected value={course.id}>{course.name}</option> : <option key={course.id} value={course.id}>{course.name}</option>
 
                             ))}
                           </Input>
-                          {errors.course_id ? <p className="mt-2 text-warning">{errors.course_id}</p> : null}
+                          {touched.courseId && errors.courseId ? <p className="mt-2 text-warning">{errors.courseId}</p> : null}
 
                         </FormGroup>
                       </Col>
@@ -386,38 +399,38 @@ const UpdateUser = (props) => {
                           </label>
                           <Input
                             className="form-control-alternative"
-                            id="role"
+                            id="roleId"
                             type="select"
                             onChange={handleChange}
-                            name="role_id"
+                            name="roleId"
                           >
                             <option value="0">Selecione uma Função</option>
 
                             {roles.map(roles => (
-                              roles.id === props.location.userData.role_id ? <option key={roles.id} selected value={parseInt(roles.id)}>{roles.name}</option>:<option key={roles.id} value={parseInt(roles.id)}>{roles.name}</option>
+                              roles.id === role1.id ? <option key={roles.id} selected value={roles.id}>{roles.name}</option> : <option key={roles.id} value={roles.id}>{roles.name}</option>
                             ))}
 
                           </Input>
-                          {errors.role_id ? <p className="mt-2 text-warning">{errors.role_id}</p> : null}
+                          {touched.roleId && errors.roleId ? <p className="mt-2 text-warning">{errors.roleId}</p> : null}
                         </FormGroup>
-                      </Col>        
-                   </Row>
+                      </Col>
+                    </Row>
 
 
-                  <div>       
+                    <div>
 
-                    <Button className="mt-4" color="primary" type="submit" onClick={handleSubmit}>
-                      Atualizar
-                    </Button>
+                      <Button className="mt-4" color="primary" type="submit" onClick={handleSubmit}>
+                        Atualizar
+                      </Button>
 
-                    
-                    <Button className="mt-4" color="danger" type="submit" onClick={() => history.push('/admin/list-users')}>
-                      Cancelar
-                    </Button>
-                  </div>
 
+                      <Button className="mt-4" color="danger" type="submit" onClick={() => history.push('/admin/list-users')}>
+                        Cancelar
+                      </Button>
                     </div>
-                    <ToastContainer />
+
+                  </div>
+                  <ToastContainer />
 
 
                 </Form>

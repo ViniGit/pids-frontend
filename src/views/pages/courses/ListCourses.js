@@ -32,6 +32,7 @@ import {
 } from "reactstrap";
 // core components
 import Header from "components/Headers/UserHeader.js";
+import getToken from 'functions/getToken';
 
 
 
@@ -45,8 +46,10 @@ const ListCourses = () => {
 
   const [courses, setCourses] = useState([]);
 
+  const config = getToken();
+
   useEffect(() => {
-    api.get('courses').then(response => {
+    api.get('courses', config).then(response => {
       setCourses(response.data);
     })
   }, []);
@@ -62,12 +65,11 @@ const ListCourses = () => {
   async function deletar(course) {
     var id = course.id;
     setModal(!modal);
-    await api.delete(`courses/${course.id}`).
+    await api.delete(`courses/${course.id}`,config).
       then(response => {
-        console.log(response.status);
         if (response.status == 204) {
-          toast.success("Registro inativado com sucesso!", { autoClose: 3000,});
-          setCourses(courses.filter(u => { return u.id != id}))
+          toast.success("Registro inativado com sucesso!", { autoClose: 3000, });
+          setCourses(courses.filter(u => { return u.id != id }))
         }
       })
 
@@ -77,12 +79,11 @@ const ListCourses = () => {
   function editCourse(course) {
 
     history.push({
-      pathname: '/admin/update-course',
-      courseData: course,
+      pathname: `/admin/update-course/${course.id}`,
+      // courseData: course,
     });
 
   }
-
 
 
   return (

@@ -20,6 +20,7 @@ import {
 } from "reactstrap";
 // core components
 import UserHeader from "components/Headers/UserHeader.js";
+import getToken from 'functions/getToken';
 
 const RegisterCourse = () => {
 
@@ -27,6 +28,7 @@ const RegisterCourse = () => {
 
   const history = useHistory();
 
+  const config = getToken();
 
   const validationSchema = Yup.object({
 
@@ -44,7 +46,7 @@ const RegisterCourse = () => {
 
     }
 
-    await api.post('courses', course)
+    await api.post('courses', course, config)
       .then(response => {
         if (response.status == 201) {
           toast.success("Curso cadastrado com sucesso!", {
@@ -61,7 +63,7 @@ const RegisterCourse = () => {
       })
   }
 
-  const { handleSubmit, handleChange, values, errors } = useFormik({
+  const { handleSubmit, handleChange, values, errors, touched } = useFormik({
     initialValues: {
       name: "",
     },
@@ -107,7 +109,7 @@ const RegisterCourse = () => {
                             name="name"
                           />
                         </FormGroup>
-                        {errors.name ? <p className="mt-2 text-warning">{errors.name}</p> : null}
+                        {touched.name && errors.name ? <p className="mt-2 text-warning">{errors.name}</p> : null}
 
                       </Col>
                     </Row>

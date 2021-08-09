@@ -7,7 +7,8 @@ import { isValidCpf } from 'functions/isValidCpf';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import api from '../../services/api';
-import { FiArrowRight } from 'react-icons/fi';
+import { FiArrowLeft} from 'react-icons/fi';
+import { AiTwotoneMail } from 'react-icons/ai';
 
 
 import {
@@ -26,7 +27,7 @@ import {
 } from "reactstrap";
 import { useAuth } from "../../Context/AuthContext";
 
-const Login = () => {
+const ForgotPassWord = () => {
 
   const history = useHistory();
 
@@ -34,80 +35,35 @@ const Login = () => {
 
 
   const validationSchema = Yup.object({
-    cpf: Yup
-      .string()
-      .test('CPF valido', 'CPF inválido!', value => isValidCpf(value))
-      .required("Campo Obrigatório!"),
+    // cpf: Yup
+    //   .string()
+    //   .test('CPF valido', 'CPF inválido!', value => isValidCpf(value))
+    //   .required("Campo Obrigatório!"),
 
-    password: Yup
+    email: Yup
       .string()
-      .required('Digite sua senha!'),
+      .email("E-mail Inválido!").required("Campo Obrigatório!"),
   });
 
   const handleSubmitt = useCallback(
     async (values) => {
-      const { cpf, password } = values;
+      const { email } = values;
 
       const data = {
-        cpf,
-        password,
+        email
       }
 
-      signIn({
-        cpf: data.cpf,
-        password: data.password,
-      });
-
-
-      // declarações para manipular quaisquer exceções não especificadas
-      // logMyErrors(e); // passa o objeto de exceção para o manipulador de erro
-      // addToast({
-      //   type: 'error',
-      //   title: 'Erro na autenticação!',
-      //   description: 'Ocorreu um erro ao fazer login, cheque as credenciais.',
+      // signIn({
+      //   cpf: data.cpf,
+      //   password: data.password,
       // });
 
-
-      // await api.post('sessions', data)
-      //   .then(response => {
-      //     //mensagens de sucesso no login
-      //     if (response.status == 201) {
-      //       toast.success("Login realizado com sucesso!", {
-      //         onClose: () => history.push('/admin/index'),
-      //         autoClose: 1500,
-      //       });
-      //     }
-      //   })
-      //   .catch(error => {
-      //     console.log(error.response);
-
-      //     //mensagens de erro no login
-
-      //     if (error.response.status == 400) {
-      //       toast.warning(error.response.data.message, {
-      //         autoClose: 4000,
-      //       });
-      //     }
-
-      //     if (error.response.status == 401) {
-      //       toast.warning(error.response.data.message, {
-      //         autoClose: 4000,
-      //       });
-      //     }
-      //     if (error.response.status == 500) {
-      //       toast.error("Não foi possível realizar a ação. Ocorreu um erro interno no servidor!", {
-      //         autoclose: 4000,
-      //       });
-      //     }
-
-      //   });
 
     }, []);
 
   const { handleSubmit, handleChange, values, errors, touched } = useFormik({
     initialValues: {
-      cpf: "",
-      password: "",
+      email: "",
     },
     validationSchema,
 
@@ -123,30 +79,30 @@ const Login = () => {
         <Card className="bg-secondary shadow border-0">
           <CardBody className="px-lg-5 py-lg-5">
             <div className="text-center text-muted mb-4">
-              <h1>Login</h1>
+              <h1>Recuperar senha</h1>
             </div>
             <Form onSubmit={handleSubmit}>
               <FormGroup className="mb-3">
                 <InputGroup className="input-group-alternative">
                   <InputGroupAddon addonType="prepend">
                     <InputGroupText>
-                      <i className="ni ni-key-25" />
+                      <AiTwotoneMail />
                     </InputGroupText>
                   </InputGroupAddon>
                   <Input
-                    placeholder="CPF"
+                    placeholder="E-mail"
                     type="CPF"
                     autoComplete="new-email"
-                    name="cpf"
-                    value={values.cpf}
+                    name="email"
+                    value={values.email}
                     onChange={handleChange}
                   />
 
                 </InputGroup>
-                {touched.cpf && errors.cpf ? <p className="mt-2 text-warning">{errors.cpf}</p> : null}
+                {touched.email && errors.email ? <p className="mt-2 text-warning">{errors.email}</p> : null}
 
               </FormGroup>
-              <FormGroup>
+              {/* <FormGroup>
                 <InputGroup className="input-group-alternative">
                   <InputGroupAddon addonType="prepend">
                     <InputGroupText>
@@ -164,10 +120,11 @@ const Login = () => {
                 </InputGroup>
                 {touched.password && errors.password ? <p className="mt-2 text-warning">{errors.password}</p> : null}
 
-              </FormGroup>
+              </FormGroup> */}
+
               <div className="text-center">
                 <Button className="my-4" color="primary" type="submit" onClick={handleSubmit}>
-                  Entrar
+                  Recuperar
                 </Button>
               </div>
             </Form>
@@ -177,11 +134,10 @@ const Login = () => {
           <Col className="text-right" xs="12">
             <Link
               className="text-light"
-              to="/auth/forgot-password"
+              to="/auth/login"
             >
-              Esqueci minha senha
-            <FiArrowRight size={20} />
-
+              <FiArrowLeft size={20} />
+               Voltar ao login
             </Link>
           </Col>
 
@@ -193,4 +149,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default ForgotPassWord;

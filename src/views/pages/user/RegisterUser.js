@@ -24,6 +24,7 @@ import {
 } from "reactstrap";
 // core components
 import UserHeader from "components/Headers/UserHeader.js";
+import getToken from 'functions/getToken';
 
 
 
@@ -37,22 +38,24 @@ const RegisterUser = () => {
   const [courses, setCourses] = useState([]);
 
 
+  const config = getToken();
+
   const history = useHistory();
 
   useEffect(() => {
-    api.get('roles').then(response => {
+    api.get('roles', config).then(response => {
       setRoles(response.data);
     })
   }, []);
 
   useEffect(() => {
-    api.get('bonds').then(response => {
+    api.get('bonds', config).then(response => {
       setBonds(response.data);
     })
   }, []);
 
   useEffect(() => {
-    api.get('courses').then(response => {
+    api.get('courses', config).then(response => {
       setCourses(response.data);
     })
   }, []);
@@ -66,7 +69,7 @@ const RegisterUser = () => {
 
     cpf: Yup
       .string()
-      .test('cpf valido', 'Cpf Não é válido', value => isValidCpf(value))
+      .test('CPF valido', 'CPF inválido!', value => isValidCpf(value))
       .required("Campo Obrigatório!"),
 
     email: Yup
@@ -84,15 +87,15 @@ const RegisterUser = () => {
       .equals([Yup.ref('password')], 'Senhas devem ser iguais!')
       .required('Confirme sua senha!'),
 
-    course_id: Yup
+    courseId: Yup
       .string()
       .required("Campo Obrigatório!"),
 
-    bond_id: Yup
+    bondId: Yup
       .string()
       .required("Campo Obrigatório!"),
 
-    role_id: Yup
+    roleId: Yup
       .string()
       .required("Campo Obrigatório!"),
 
@@ -104,23 +107,22 @@ const RegisterUser = () => {
   });
 
   async function handleSubmitt(values) {
-    const { name, email, cpf, password, bond_id, course_id, role_id, phone } = values;
+    const { name, email, cpf, password, bondId, courseId, roleId, phone } = values;
 
     const user = {
       name,
       email,
       cpf,
       password,
-      bond_id,
-      course_id,
-      role_id,
+      bondId,
+      courseId,
+      roleId,
       phone
     }
 
 
     await api.post('users', user)
       .then(response => {
-        console.log(response.data);
         //mensagens de sucesso no cadastro
         if (response.status == 201) {
           toast.success("Usuário cadastrado com sucesso!", {
@@ -130,11 +132,10 @@ const RegisterUser = () => {
         }
       })
       .catch(error => {
-        console.log(error.response);
 
         //mensagens de erro no cadastro
         if (error.response.status == 400) {
-          toast.warning(error.response.data[0].message, {
+          toast.error(error.response.data.message, {
             autoClose: 4000,
           });
         }
@@ -148,7 +149,7 @@ const RegisterUser = () => {
 
   }
 
-  const { handleSubmit, handleChange, values, errors } = useFormik({
+  const { handleSubmit, handleChange, values, errors, touched } = useFormik({
     initialValues: {
       name: "",
       cpf: "",
@@ -156,12 +157,13 @@ const RegisterUser = () => {
       phone: "",
       password: "",
       password_confirmation: "",
-      bond_id: "",
-      course_id: "",
-      role_id: "",
+      bondId: "",
+      courseId: "",
+      roleId: "",
 
     },
     validationSchema,
+
     onSubmit(values) {
       handleSubmitt(values);
     },
@@ -203,7 +205,7 @@ const RegisterUser = () => {
                             onChange={handleChange}
                             name="name"
                           />
-                          {errors.name ? <p className="mt-2 text-warning">{errors.name}</p> : null}
+                          {errors.name && touched.name ? <p className="mt-2 text-warning">{errors.name}</p> : null}
                         </FormGroup>
                       </Col>
 
@@ -224,7 +226,7 @@ const RegisterUser = () => {
                             onChange={handleChange}
                             name="cpf"
                           />
-                          {errors.cpf ? <p className="mt-2 text-warning">{errors.cpf}</p> : null}
+                          {touched.cpf && errors.cpf ? <p className="mt-2 text-warning">{errors.cpf}</p> : null}
                         </FormGroup>
                       </Col>
 
@@ -246,7 +248,7 @@ const RegisterUser = () => {
                             name="email"
                           />
                         </FormGroup>
-                        {errors.email ? <p className="mt-2 text-warning">{errors.email}</p> : null}
+                        {touched.email && errors.email ? <p className="mt-2 text-warning">{errors.email}</p> : null}
 
                       </Col>
 
@@ -268,7 +270,7 @@ const RegisterUser = () => {
                             name="phone"
                           />
                         </FormGroup>
-                        {errors.phone ? <p className="mt-2 text-warning">{errors.phone}</p> : null}
+                        {touched.phone && errors.phone ? <p className="mt-2 text-warning">{errors.phone}</p> : null}
 
                       </Col>
                     </Row>
@@ -293,7 +295,7 @@ const RegisterUser = () => {
                             onChange={handleChange}
                             name="password"
                           />
-                          {errors.password ? <p className="mt-2 text-warning">{errors.password}</p> : null}
+                          {touched.password && errors.password ? <p className="mt-2 text-warning">{errors.password}</p> : null}
                         </FormGroup>
                       </Col>
 
@@ -316,7 +318,7 @@ const RegisterUser = () => {
                             onChange={handleChange}
                             name="password_confirmation"
                           />
-                          {errors.password_confirmation ? <p className="mt-2 text-warning">{errors.password_confirmation}</p> : null}
+                          {touched.password_confirmation && errors.password_confirmation ? <p className="mt-2 text-warning">{errors.password_confirmation}</p> : null}
 
                         </FormGroup>
                       </Col>
@@ -339,7 +341,7 @@ const RegisterUser = () => {
                             placeholder=""
                             type="select"
                             onChange={handleChange}
-                            name="bond_id"
+                            name="bondId"
                           >
                             <option value="0">Selecione uma Função</option>
 
@@ -348,7 +350,7 @@ const RegisterUser = () => {
                             ))}
 
                           </Input>
-                          {errors.bond_id ? <p className="mt-2 text-warning">{errors.bond_id}</p> : null}
+                          {touched.bondId && errors.bondId ? <p className="mt-2 text-warning">{errors.bondId}</p> : null}
 
                         </FormGroup>
                       </Col>
@@ -367,7 +369,7 @@ const RegisterUser = () => {
                             placeholder=""
                             type="select"
                             onChange={handleChange}
-                            name="course_id"
+                            name="courseId"
                           >
 
                             <option value="0">Selecione o Curso</option>
@@ -376,7 +378,7 @@ const RegisterUser = () => {
                               <option key={course.id} value={course.id}>{course.name}</option>
                             ))}
                           </Input>
-                          {errors.course_id ? <p className="mt-2 text-warning">{errors.course_id}</p> : null}
+                          {touched.courseId && errors.courseId ? <p className="mt-2 text-warning">{errors.courseId}</p> : null}
 
                         </FormGroup>
                       </Col>
@@ -396,7 +398,7 @@ const RegisterUser = () => {
                             id="bond-name"
                             type="select"
                             onChange={handleChange}
-                            name="role_id"
+                            name="roleId"
                           >
                             <option value="0">Selecione uma Função</option>
 
@@ -406,7 +408,7 @@ const RegisterUser = () => {
                             ))}
 
                           </Input>
-                          {errors.role_id ? <p className="mt-2 text-warning">{errors.role_id}</p> : null}
+                          {touched.roleId && errors.roleId ? <p className="mt-2 text-warning">{errors.roleId}</p> : null}
                         </FormGroup>
                       </Col>
                     </Row>

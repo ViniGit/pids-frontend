@@ -1,23 +1,11 @@
-/*!
 
-=========================================================
-* Argon Dashboard React - v1.2.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/argon-dashboard-react
-* Copyright 2021 Creative Tim (https://www.creative-tim.com)
-* Licensed under MIT (https://github.com/creativetimofficial/argon-dashboard-react/blob/master/LICENSE.md)
-
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
-import React from "react";
-
-// reactstrap components
+import React, { useEffect, useState } from 'react';
+import { Link, useHistory } from 'react-router-dom';
+import { useFormik } from 'formik';
+import * as Yup from "yup";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import api from '../../../services/api';
 import {
   Badge,
   Card,
@@ -36,23 +24,87 @@ import {
   Container,
   Row,
   UncontrolledTooltip,
+  Button,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter
 } from "reactstrap";
 // core components
 import Header from "components/Headers/UserHeader.js";
-function deletar(e) {
-  e.preventDefault();
-  if (window.confirm("Deseja realmente excluir esse registro?")) {
-    alert("Registro Excluído!");
+import getToken from 'functions/getToken';
+
+
+
+const ListCourt = () => {
+
+  const [modal, setModal] = useState(false);
+
+  const [court, setCourt] = useState({});
+
+  const history = useHistory();
+
+  const [courts, setCourts] = useState([]);
+
+  const config = getToken();
+
+  useEffect(() => {
+    api.get('sportCourts', config).then(response => {
+      setCourts(response.data);
+    })
+  }, []);
+
+
+
+  const toggle = (room) => {
+    setModal(!modal);
+    setCourt(room);
+
+  };
+
+  async function deletar(room) {
+
+    var id = room.id;
+    setModal(!modal);
+    await api.delete(`sportCourts/${room.id}`, config).
+      then(response => {
+        if (response.status == 204) {
+          toast.success("Registro inativado com sucesso!", { autoClose: 3000, });
+          setCourts(courts.filter(u => { return u.id != id }))
+        }
+      })
+
+
   }
 
+  function editRoom(court) {
 
-}
-const ListCourt = () => {
+    history.push({
+      pathname: `/admin/update-court/${court.id}`,
+      // courtData: court,
+    });
+
+  }
+
   return (
     <>
+      <div>
+        <Modal isOpen={modal} toggle={toggle} className="">
+
+          <ModalHeader toggle={toggle}></ModalHeader>
+          <ModalBody>
+            Tem certeza que deseja Inativar os dados dessa Quadra?
+        </ModalBody>
+          <ModalFooter>
+            <Button color="primary" onClick={() => { deletar(court) }}>Confirmar</Button>
+            <Button color="danger" onClick={toggle}>Cancelar</Button>
+          </ModalFooter>
+        </Modal>
+      </div>
       <Header />
       {/* Page content */}
       <Container className="mt--7" fluid>
+
         {/* Table */}
         <Row>
           <div className="col">
@@ -69,50 +121,54 @@ const ListCourt = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <th scope="row">
-                      <Media>
-                        <span className="mb-0 text-sm">
-                          Quadra externa
-                          </span>
-                      </Media>
-                    </th>
-                    <td>Localizada no Elefante azul (estacionamento)</td>
+                  {
+                    courts.map(court => (
+                      <tr>
+                        <th scope="row">
+                          <Media>
+                            <span className="mb-0 text-sm">
+                              {court.name}
+                            </span>
+                          </Media>
+                        </th>
+                        <th scope="row">
+                          <Media>
+                            <span className="mb-0 text-sm">
+                              {court.description}
+                            </span>
+                          </Media>
+                        </th>
 
-                    <td className="text-right">
-                      <UncontrolledDropdown>
-                        <DropdownToggle
-                          className="btn-icon-only text-light"
-                          href="#pablo"
-                          role="button"
-                          size="sm"
-                          color=""
-                          onClick={(e) => e.preventDefault()}
-                        >
-                          <i className="fas fa-ellipsis-v" />
-                        </DropdownToggle>
-                        <DropdownMenu className="dropdown-menu-arrow" right>
-                          <DropdownItem
-                            href="#pablo"
-                            onClick={(e) => e.preventDefault()}
-                          >
-                            Editar
+                        <td className="text-right">
+                          <UncontrolledDropdown>
+                            <DropdownToggle
+                              className="btn-icon-only text-light"
+                              role="button"
+                              size="sm"
+                              color=""
+                              onClick={(e) => e.preventDefault()}
+                            >
+                              <i className="fas fa-ellipsis-v" />
+                            </DropdownToggle>
+                            <DropdownMenu className="dropdown-menu-arrow" right>
+                              <DropdownItem
+                                onClick={() => editRoom(court)}
+                              >
+                                Editar
                           </DropdownItem>
-                          <DropdownItem
-                            href="#pablo"
-                            onClick={(e) => deletar(e)}
+                              <DropdownItem
+                                onClick={() => toggle(court)}
 
-                          >
-                            Inativar
+                              >
+                                Inativar
                           </DropdownItem>
 
-                        </DropdownMenu>
-                      </UncontrolledDropdown>
-                    </td>
-                  </tr>
-
-                 
-
+                            </DropdownMenu>
+                          </UncontrolledDropdown>
+                        </td>
+                      </tr>
+                    ))
+                  }
 
                 </tbody>
               </Table>
@@ -169,6 +225,8 @@ const ListCourt = () => {
                 </nav>
               </CardFooter>
             </Card>
+            <ToastContainer />
+
           </div>
         </Row>
         {/* Dark table */}
