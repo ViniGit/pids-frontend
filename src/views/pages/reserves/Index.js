@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import api from '../services/api';
+import api from '../../../services/api';
 
 import Chart from "chart.js";
 
 import { useAuth } from "Context/AuthContext";
 
 import "./style.css";
+
 import {
   BrowserRouter as Router,
   Switch,
@@ -13,6 +14,7 @@ import {
   Link,
   useHistory
 } from "react-router-dom";
+
 import {
   Badge,
   Card,
@@ -48,14 +50,12 @@ import {
   chartExample2,
 } from "variables/charts.js";
 
-import Header from "components/Headers/ListHeader.js";
-import getToken from '../functions/getToken';
-
-import CardSportCourts from '../components/card/sportCourts/CardSportCourts';
-import CardRooms from '../components/card/Rooms/CardRooms';
-import CardEquipments from '../components/card/Equipments/CardEquipments';
-
-
+import Header from "../../../components/Headers/ListHeader.js";
+import getToken from '../../../functions/getToken';
+import { date } from 'yup/lib/locale';
+import CardSportCourts from '../../../components/card/sportCourts/CardSportCourts';
+import CardRooms from '../../../components/card/Rooms/CardRooms';
+import CardEquipments from '../../../components/card/Equipments/CardEquipments';
 
 const Index = (props) => {
   const [activeNav, setActiveNav] = useState(1);
@@ -63,26 +63,39 @@ const Index = (props) => {
 
   const { user } = useAuth();
   const [reserve, setReserve] = useState({});
-  const [reserveEquipment, setReserveEquipment] = useState([]);
-  const [reserveRooms, setReserveRooms] = useState([]);
-  const [reserveSportCourts, setReserveSportCourts] = useState([]);
+  const [reserveEquipment, setReserveEquipment] = useState([{}]);
+  const [reserveRooms, setReserveRooms] = useState([{}]);
+  const [reserveSportCourts, setReserveSportCourts] = useState([{}]);
   const history = useHistory();
 
   const config = getToken();
 
-
   useEffect(() => {
-    api.get('/reserves/pending', config).then(response => {
-      setReserve(response.data);
+    api.get('/reserves', config).then(response => {
+      setReserveSportCourts(response.data.sportCourtsReserves);
+      // setReserve(response.data);
       setReserveEquipment(response.data.equipmentsReserves);
       setReserveRooms(response.data.roomsReserves);
-      setReserveSportCourts(response.data.sportCourtsReserves);
       console.log(response.data);
     })
   }, []);
-  if (window.Chart) {
-    parseOptions(Chart, chartOptions());
+
+  function redirectDetailsReserveSportCourt(sportCourt) {
+
+    history.push({
+      pathname: `/admin/details-reserve-sport-court/${sportCourt.id}`,
+    });
+
   }
+
+  function redirectDetailsReserveEquipment(equipment) {
+
+    history.push({
+      pathname: `/admin/details-reserve-equipment/${equipment.id}`,
+    });
+
+  }
+
   function redirectDetailsReserveRoom(room) {
 
     history.push({
@@ -90,6 +103,7 @@ const Index = (props) => {
     });
 
   }
+
   const toggleNavs = (e, index) => {
     e.preventDefault();
     setActiveNav(index);
@@ -100,10 +114,9 @@ const Index = (props) => {
       <Header />
       <div className="mt-4 ml-3">
         <h6 className="heading-small mb-4 pl-4">
-          Solicitações de Reservas pendentes
+          Solicitações de Reservas
         </h6>
       </div>
-
       {reserveEquipment.length == 0 && reserveRooms.length == 0 && reserveSportCourts == 0 ?
         <div className="p-4">
           < h4>Nenhuma reserva Registrada!</h4>
@@ -117,16 +130,15 @@ const Index = (props) => {
                   sportCourts.starts_at = new Date(sportCourts.starts_at), //pegando o time stamp e transformando e data
                   sportCourts.ends_at = new Date(sportCourts.ends_at),
 
-                  <Card className="bg-secondary shadow">
-                    <div className="container d-flex d-sm-inline-flex " >
+                  < Card className="bg-secondary shadow" >
 
+                    <div className="container d-flex d-sm-inline-flex " onClick={() => redirectDetailsReserveSportCourt(sportCourts)}>
                       {sportCourts.status ?
                         <CardSportCourts sportCourts={sportCourts}></CardSportCourts>
                         :
                         null}
-
-
                     </div>
+
                   </Card>
                 ))}
 
@@ -153,22 +165,27 @@ const Index = (props) => {
                 equipments.ends_at = new Date(equipments.ends_at),
                 <Card className="bg-secondary shadow">
 
-                  <div className="container d-flex d-sm-inline-flex ">
+                  <div className="container d-flex d-sm-inline-flex " onClick={() => redirectDetailsReserveEquipment(equipments)}>
 
                     {equipments.status ?
                       <CardEquipments equipments={equipments}></CardEquipments>
                       :
                       null}
+
                   </div>
+
                 </Card>
               ))}
 
             </Col>
           </Row>
 
+
+
+
+
         </Container>
       }
-
 
       {/* 
       <Container className="mt--7" fluid>

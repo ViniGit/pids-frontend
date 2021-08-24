@@ -29,7 +29,7 @@ const Header = () => {
           <div className="header-body">
             {/* Card stats */}
             <Row>
-              <Col lg="4" xl="4">
+              <Col lg="6" xl="4">
                 <a href="/admin/list-users">
 
                   <Card className="card-stats mb-4 mb-xl-0 pt-4">
@@ -42,15 +42,15 @@ const Header = () => {
                             tag="h5"
                             className="text-uppercase text-muted mb-0"
                           >
-                            Reservas Pendentes
+                            Usuários
                         </CardTitle>
-                          <span className="h2 font-weight-bold mb-0">5</span>
+                          <span className="h2 font-weight-bold mb-0">924</span>
                         </div>
-                        {/* <Col className="col-auto">
+                        <Col className="col-auto">
                           <div className="icon icon-shape bg-info text-white rounded-circle shadow">
                             <i className="fas fa-users" />
                           </div>
-                        </Col> */}
+                        </Col>
                       </Row>
 
                       <p className="mt-4 mb-0 text-muted text-sm">

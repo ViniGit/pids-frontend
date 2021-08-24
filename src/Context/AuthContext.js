@@ -21,7 +21,7 @@ const AuthProvider = ({ children }) => {
     // })
     const token = localStorage.getItem('@EReserva:token');
     const key = getSecretKey();
-    jwt.verify(token, 'd99b44ee25aa3918c5f8287e8da8871e', function (err, decoded) {
+    jwt.verify(token, key, function (err, decoded) {
       if (err && err.message === 'jwt expired') {
         signOut();
       }

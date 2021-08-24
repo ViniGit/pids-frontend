@@ -23,10 +23,18 @@ import ListCourt from "views/pages/court/ListCourt.js";
 import UpdateCourt from "views/pages/court/UpdateCourt.js";
 
 
+import ListAllReserves from "views/pages/reserves/Index";
+import ReserveDetailsSportCourt from 'views/pages/reserves/DetailReserveSportCourt';
+import ReserveDetailsEquipment from 'views/pages/reserves/DetailReserveEquipment';
+import ReserveDetailsRom from 'views/pages/reserves/DetailReserveRoom';
+
+
 import Register from "views/pages/Register.js";
 import Login from "views/pages/Login.js";
 import ForgotPassWord from "views/pages/ForgotPassword";
 import Icons from "views/pages/Icons.js";
+
+
 
 var routes = [
   {
@@ -36,6 +44,36 @@ var routes = [
     component: Index,
     layout: "/admin",
     show: true
+  },
+  {
+    path: "/list-all-reserves",
+    name: "Listagem de Reservas",
+    icon: "ni ni-circle-08 text-pink",
+    component: ListAllReserves,
+    layout: "/admin",
+    show: true
+  },
+
+  {
+    path: "/details-reserve-sport-court/",
+    name: "Detalhes da Reserva",
+    icon: "ni ni-circle-08 text-pink",
+    component: ReserveDetailsSportCourt,
+    layout: "/admin",
+  },
+  {
+    path: "/details-reserve-equipment/",
+    name: "Detalhes da Reserva",
+    icon: "ni ni-circle-08 text-pink",
+    component: ReserveDetailsEquipment,
+    layout: "/admin",
+  },
+  {
+    path: "/details-reserve-room/",
+    name: "Detalhes da Reserva",
+    icon: "ni ni-circle-08 text-pink",
+    component: ReserveDetailsRom,
+    layout: "/admin",
   },
   {
     path: "/icons",
@@ -214,6 +252,8 @@ var routes = [
     component: ForgotPassWord,
     layout: "/auth",
   },
+
+
 ];
 
 export default routes;
