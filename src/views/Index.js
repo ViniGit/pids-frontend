@@ -62,7 +62,7 @@ const Index = (props) => {
   const [chartExample1Data, setChartExample1Data] = useState("data1");
 
   const { user } = useAuth();
-  const [reserve, setReserve] = useState({});
+  const [reserves, setReserves] = useState([{}]);
   const [reserveEquipment, setReserveEquipment] = useState([]);
   const [reserveRooms, setReserveRooms] = useState([]);
   const [reserveSportCourts, setReserveSportCourts] = useState([]);
@@ -73,16 +73,29 @@ const Index = (props) => {
 
   useEffect(() => {
     api.get('/reserves/pending', config).then(response => {
-      setReserve(response.data);
-      setReserveEquipment(response.data.equipmentsReserves);
-      setReserveRooms(response.data.roomsReserves);
-      setReserveSportCourts(response.data.sportCourtsReserves);
-      console.log(response.data);
+      setReserves(response.data);
     })
   }, []);
   if (window.Chart) {
     parseOptions(Chart, chartOptions());
   }
+
+  function redirectDetailsReserveSportCourt(sportCourt) {
+
+    history.push({
+      pathname: `/admin/details-reserve-sport-court/${sportCourt.id}`,
+    });
+
+  }
+
+  function redirectDetailsReserveEquipment(equipment) {
+
+    history.push({
+      pathname: `/admin/details-reserve-equipment/${equipment.id}`,
+    });
+
+  }
+
   function redirectDetailsReserveRoom(room) {
 
     history.push({
@@ -90,6 +103,7 @@ const Index = (props) => {
     });
 
   }
+
   const toggleNavs = (e, index) => {
     e.preventDefault();
     setActiveNav(index);
@@ -99,70 +113,52 @@ const Index = (props) => {
     <>
       <Header />
       <div className="mt-4 ml-3">
-        <h6 className="heading-small mb-4 pl-4">
-          Solicitações de Reservas pendentes
-        </h6>
+        <h4 className=" mb-4 pl-4">
+          SOLICITAÇÕES DE RESERVAS PENDENTES
+        </h4>
       </div>
 
-      {reserveEquipment.length == 0 && reserveRooms.length == 0 && reserveSportCourts == 0 ?
+      {reserves.length == 0 ?
         <div className="p-4">
-          < h4>Nenhuma reserva Registrada!</h4>
+          < h4 className="p-3">Não possui nenhuma Reserva Pendente!</h4>
         </div> :
         <Container className="mt--7 pt-8" fluid>
           <Row>
             <Col className="order-xl-1" xl="10">
               {
+                reserves.map(reserve => (
 
-                reserveSportCourts.map(sportCourts => (
-                  sportCourts.starts_at = new Date(sportCourts.starts_at), //pegando o time stamp e transformando e data
-                  sportCourts.ends_at = new Date(sportCourts.ends_at),
+                  < Card className="bg-secondary shadow" >
 
-                  <Card className="bg-secondary shadow">
-                    <div className="container d-flex d-sm-inline-flex " >
+                    {reserve.sport_court ?
+                      <div className="container d-flex d-sm-inline-flex " onClick={() => redirectDetailsReserveSportCourt(reserve)}>
+                        <CardSportCourts reserve={reserve}></CardSportCourts>
+                      </div>
 
-                      {sportCourts.status ?
-                        <CardSportCourts sportCourts={sportCourts}></CardSportCourts>
-                        :
-                        null}
+                      :
+                      null}
 
 
-                    </div>
+                    {reserve.room ?
+                      <div className="container d-flex d-sm-inline-flex " onClick={() => redirectDetailsReserveRoom(reserve)}>
+                        <CardRooms reserve={reserve}></CardRooms>
+                      </div>
+
+                      :
+                      null}
+
+
+                    {reserve.equipment ?
+                      <div className="container d-flex d-sm-inline-flex " onClick={() => redirectDetailsReserveEquipment(reserve)}>
+                        <CardEquipments reserve={reserve}></CardEquipments>
+                      </div>
+
+                      :
+                      null}
+
+
                   </Card>
                 ))}
-
-              {reserveRooms.map(room => (
-
-                room.starts_at = new Date(room.starts_at), //pegando o time stamp e transformando e data
-                room.ends_at = new Date(room.ends_at),
-                <Card className="bg-secondary shadow">
-
-                  <div className="container d-flex d-sm-inline-flex" onClick={() => redirectDetailsReserveRoom(room)}>
-
-                    {room.status ?
-                      <CardRooms room={room}></CardRooms>
-                      :
-                      null}
-
-                  </div>
-
-                </Card>
-              ))}
-
-              {reserveEquipment.map(equipments => (
-                equipments.starts_at = new Date(equipments.starts_at), //pegando o time stamp e transformando e data
-                equipments.ends_at = new Date(equipments.ends_at),
-                <Card className="bg-secondary shadow">
-
-                  <div className="container d-flex d-sm-inline-flex ">
-
-                    {equipments.status ?
-                      <CardEquipments equipments={equipments}></CardEquipments>
-                      :
-                      null}
-                  </div>
-                </Card>
-              ))}
-
             </Col>
           </Row>
 

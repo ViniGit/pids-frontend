@@ -2,17 +2,18 @@ import "../style.css";
 
 const CardRooms = (props) => {
 
-  var status = props.room.status; // deixando o card com a cor dinâmica
-
+  var status = props.reserve.status; // deixando o card com a cor dinâmica
+  props.reserve.starts_at = new Date(props.reserve.starts_at); //pegando o time stamp e transformando e data
+  props.reserve.ends_at = new Date(props.reserve.ends_at);
   return (
 
     <div className={`card event w-50 m-2 box-${status}`}>
       <div className="card-body">
-        <h4 className="card-title">{props.room.room.name}</h4>
-        <p className="card-text">Tipo da sala: <strong>{(props.room.room.type == "lab" ? "Laboratório" : (props.room.room.type == "auditorium" ? "Auditório" : (props.room.room.type == "room" ? "Sala" : null)))}</strong></p>
-        <p className="card-text">Solicitante: <strong>{props.room.user.name}</strong></p>
-        <p className="card-text">De: {`${props.room.starts_at.getDate()}/${props.room.starts_at.getMonth()}/${props.room.starts_at.getFullYear()}`} Horário: {props.room.starts_at.getHours()}:{props.room.starts_at.getMinutes()}</p>
-        <p className="card-text">Até: {`${props.room.ends_at.getDate()}/${props.room.ends_at.getMonth()}/${props.room.ends_at.getFullYear()}`} Horário: {props.room.ends_at.getHours()}:{props.room.ends_at.getMinutes()}</p>
+        <h4 className="card-title">{props.reserve.room.name}</h4>
+        <p className="card-text">Tipo da sala: <strong>{(props.reserve.room.type == "lab" ? "Laboratório" : (props.reserve.room.type == "auditorium" ? "Auditório" : (props.reserve.room.type == "room" ? "Sala" : null)))}</strong></p>
+        <p className="card-text">Solicitante: <strong>{props.reserve.user.name}</strong></p>
+        <p className="card-text">De: {`${props.reserve.starts_at.getDate()}/${props.reserve.starts_at.getMonth()}/${props.reserve.starts_at.getFullYear()}`} Horário: {props.reserve.starts_at.getHours()}:{props.reserve.starts_at.getMinutes()}</p>
+        <p className="card-text">Até: {`${props.reserve.ends_at.getDate()}/${props.reserve.ends_at.getMonth()}/${props.reserve.ends_at.getFullYear()}`} Horário: {props.reserve.ends_at.getHours()}:{props.reserve.ends_at.getMinutes()}</p>
         <p className="card-text">Status da Reserva: <strong>{(status == "accepted" ? "Aprovada" : (status == "pending" ? "Pendente" : (status == "denied" ? "Negado" : null)))}</strong></p>
       </div>
     </div>
