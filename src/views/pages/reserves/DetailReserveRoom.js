@@ -33,13 +33,15 @@ import {
   Row,
   UncontrolledTooltip,
   Button,
-  Modal,
   ModalHeader,
   ModalBody,
   ModalFooter,
   CardBody,
   CardTitle,
-  Col
+  Col,
+  Form,
+  Input,
+  FormGroup
 } from "reactstrap";
 
 import {
@@ -53,6 +55,10 @@ import Header from "../../../components/Headers/ListHeader.js";
 import getToken from '../../../functions/getToken';
 import { date } from 'yup/lib/locale';
 import CardRooms from '../../../components/card/Rooms/CardRooms';
+import Modal from 'react-bootstrap/Modal'
+import { useFormik } from 'formik';
+import * as Yup from "yup";
+import { error } from 'jquery';
 
 const DetailReserveRoom = (props) => {
   const [activeNav, setActiveNav] = useState(1);
@@ -61,10 +67,18 @@ const DetailReserveRoom = (props) => {
   const [room, setRoom] = useState([{}]);
   const [equipment, setReserveEquipment] = useState([{}]);
   const history = useHistory();
+  const [modalIsOpen, setIsOpen] = useState(false);
 
 
   const config = getToken();
 
+  const validationSchema = Yup.object({
+
+    justify: Yup
+      .string()
+      .required("Campo Obrigatório!"),
+
+  })
   useEffect(() => {
 
     const url = props.location.pathname.split("/"); //posição 3 do array se encontra o id do equipamento
@@ -73,25 +87,60 @@ const DetailReserveRoom = (props) => {
     })
   }, []);
 
+  function openModal() {
+    setIsOpen(true);
+  }
+
+  function closeModal() {
+    setIsOpen(false);
+  }
   function acceptReserve(reserve) {
-    console.log('config');
-    console.log(config);
-    api.put(`/reserves/${reserve.id}/accept`, {}, config).then(response => {
+
+
+    var resultado = window.confirm("Deseja aprovar a reserva?");
+    if (resultado == true) {
+      api.put(`/reserves/${reserve.id}/accept`, {}, config).then(response => {
+        console.log(response.data);
+        history.push('/admin/index')
+      })
+    }
+    else {
+    }
+
+
+
+  }
+
+  function denyReserve(values) {
+    const body = {
+      justification: values.justify
+    }
+
+    api.put(`/reserves/${room.id}/deny`, body, config).then(response => {
       console.log(response.data);
-      history.push('/admin/index')
+      setIsOpen(false);
+      history.push('/admin/index');
+
+    }).catch(error => {
+      console.log(error);
     })
 
   }
 
-  function denyReserve(reserve) {
 
-    api.put(`/reserves/${reserve.id}/deny`, {}, config).then(response => {
-      console.log(response.data);
-    })
+  const { handleSubmit, handleChange, values, errors, touched } = useFormik({
+    initialValues: {
+      justify: "",
+    },
 
+    validationSchema,
+    onSubmit(values) {
+      denyReserve(values)
+    },
 
-  }
+  });
 
+  
   const toggleNavs = (e, index) => {
     e.preventDefault();
     setActiveNav(index);
@@ -107,6 +156,48 @@ const DetailReserveRoom = (props) => {
       </div>
       {
         <Container className="mt--7 pt-8" fluid>
+
+          <div>
+            <Modal
+              show={modalIsOpen}
+              size="lg"
+              aria-labelledby="contained-modal-title-vcenter"
+              centered
+            >
+              <Modal.Header >
+                <Modal.Title id="contained-modal-title-vcenter">
+                  Justificar Negação
+                </Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                <Form onSubmit={handleSubmit}>
+                  <FormGroup>
+                    <label
+                      className="form-control-label"
+                      htmlFor="input-room-justify"
+                    >
+                      Justificativa:
+                    </label>
+                    <Input
+                      className="form-control-alternative"
+                      defaultValue=""
+                      id="input-room-justify"
+                      placeholder=""
+                      type="text"
+                      onChange={handleChange}
+                      name="justify"
+                    />
+                    {touched.justify && errors.justify ? <p className="mt-2 text-warning">{errors.justify}</p> : null}
+                  </FormGroup>
+
+                </Form>
+              </Modal.Body>
+              <Modal.Footer>
+                <Button className="mt-4" color="primary" onClick={() => closeModal()}>Voltar</Button>
+                <Button className="mt-4" color="danger" onClick={handleSubmit}>Negar</Button>
+              </Modal.Footer>
+            </Modal>
+          </div>
           <Row>
             <Col className="order-xl-1" xl="10">
               {
@@ -139,7 +230,7 @@ const DetailReserveRoom = (props) => {
                               <Button className="mt-4" color="primary" onClick={() => acceptReserve(room)} >
                                 Aprovar
                               </Button>
-                              <Button className="mt-4" color="danger" onClick={() => denyReserve(room)}>
+                              <Button className="mt-4" color="danger" onClick={() => setIsOpen(true)}>
                                 Negar
                               </Button>
                             </div>
