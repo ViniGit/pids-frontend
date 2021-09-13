@@ -12,8 +12,8 @@ const CardRooms = (props) => {
         <h4 className="card-title">{props.reserve.room.name}</h4>
         <p className="card-text">Tipo da sala: <strong>{(props.reserve.room.type == "lab" ? "Laboratório" : (props.reserve.room.type == "auditorium" ? "Auditório" : (props.reserve.room.type == "room" ? "Sala" : null)))}</strong></p>
         <p className="card-text">Solicitante: <strong>{props.reserve.user.name}</strong></p>
-        <p className="card-text">De: {`${props.reserve.starts_at.getDate()}/${props.reserve.starts_at.getMonth()}/${props.reserve.starts_at.getFullYear()}`} Horário: {props.reserve.starts_at.getHours()}:{props.reserve.starts_at.getMinutes()}</p>
-        <p className="card-text">Até: {`${props.reserve.ends_at.getDate()}/${props.reserve.ends_at.getMonth()}/${props.reserve.ends_at.getFullYear()}`} Horário: {props.reserve.ends_at.getHours()}:{props.reserve.ends_at.getMinutes()}</p>
+        <p className="card-text">Data: {`${props.reserve.starts_at.getDate()}/${props.reserve.starts_at.getMonth()}/${props.reserve.starts_at.getFullYear()}`} Horário: {props.reserve.starts_at.getHours()}:{props.reserve.starts_at.getMinutes()}</p>
+        {/* <p className="card-text">Até: {`${props.reserve.ends_at.getDate()}/${props.reserve.ends_at.getMonth()}/${props.reserve.ends_at.getFullYear()}`} Horário: {props.reserve.ends_at.getHours()}:{props.reserve.ends_at.getMinutes()}</p> */}
         <p className="card-text">Status da Reserva: <strong>{(status == "accepted" ? "Aprovada" : (status == "pending" ? "Pendente" : (status == "denied" ? "Negado" : null)))}</strong></p>
       </div>
     </div>

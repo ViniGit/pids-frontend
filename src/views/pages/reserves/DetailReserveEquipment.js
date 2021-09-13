@@ -100,7 +100,7 @@ const DetailReserveEquipment = (props) => {
 
                 < Card className="bg-secondary shadow" >
 
-                  <div className="container d-flex d-sm-inline-flex" >
+                  <div className="container2 d-flex d-sm-inline-flex" >
 
                     {equipment.status ?
                       <div className={`card w-50 m-2 `}>
@@ -111,8 +111,8 @@ const DetailReserveEquipment = (props) => {
                           <p className="card-text">Solicitante: <strong>{equipment.user.name}</strong></p>
                           <p className="card-text">E-mail: <strong>{equipment.user.email}</strong></p>
                           <p className="card-text">CPF: <strong>{equipment.user.cpf}</strong></p>
-                          <p className="card-text">De: {`${equipment.starts_at.getDate()}/${equipment.starts_at.getMonth()}/${equipment.starts_at.getFullYear()}`} Horário: {equipment.starts_at.getHours()}:{equipment.starts_at.getMinutes()}</p>
-                          <p className="card-text">Até: {`${equipment.ends_at.getDate()}/${equipment.ends_at.getMonth()}/${equipment.ends_at.getFullYear()}`} Horário: {equipment.ends_at.getHours()}:{equipment.ends_at.getMinutes()}</p>
+                          <p className="card-text">Data: {`${equipment.starts_at.getDate()}/${equipment.starts_at.getMonth()}/${equipment.starts_at.getFullYear()}`} Horário: {equipment.starts_at.getHours()}:{equipment.starts_at.getMinutes()}</p>
+                          {/* <p className="card-text">Até: {`${equipment.ends_at.getDate()}/${equipment.ends_at.getMonth()}/${equipment.ends_at.getFullYear()}`} Horário: {equipment.ends_at.getHours()}:{equipment.ends_at.getMinutes()}</p> */}
                           <p className="card-text">Status da Reserva: <strong>{(equipment.status == "accepted" ? "Aprovada" : (equipment.status == "pending" ? "Pendente" : (equipment.status == "denied" ? "Negado" : null)))}</strong></p>
                         </div>
                         {/* </a> */}

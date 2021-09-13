@@ -103,7 +103,7 @@ const DetailReserveSportCourt = (props) => {
 
                 < Card className="bg-secondary shadow" >
 
-                  <div className="container d-flex d-sm-inline-flex" >
+                  <div className="container2 d-flex d-sm-inline-flex" >
 
                     {sportCourts.status ?
                       <div className={`card w-50 m-2 `}>
@@ -114,8 +114,8 @@ const DetailReserveSportCourt = (props) => {
                           <p className="card-text">Solicitante: <strong>{sportCourts.user.name}</strong></p>
                           <p className="card-text">E-mail: <strong>{sportCourts.user.email}</strong></p>
                           <p className="card-text">CPF: <strong>{sportCourts.user.cpf}</strong></p>
-                          <p className="card-text">De: {`${sportCourts.starts_at.getDate()}/${sportCourts.starts_at.getMonth()}/${sportCourts.starts_at.getFullYear()}`} Horário: {sportCourts.starts_at.getHours()}:{sportCourts.starts_at.getMinutes()}</p>
-                          <p className="card-text">Até: {`${sportCourts.ends_at.getDate()}/${sportCourts.ends_at.getMonth()}/${sportCourts.ends_at.getFullYear()}`} Horário: {sportCourts.ends_at.getHours()}:{sportCourts.ends_at.getMinutes()}</p>
+                          <p className="card-text">Data: {`${sportCourts.starts_at.getDate()}/${sportCourts.starts_at.getMonth()}/${sportCourts.starts_at.getFullYear()}`} Horário: {sportCourts.starts_at.getHours()}:{sportCourts.starts_at.getMinutes()}</p>
+                          {/* <p className="card-text">Até: {`${sportCourts.ends_at.getDate()}/${sportCourts.ends_at.getMonth()}/${sportCourts.ends_at.getFullYear()}`} Horário: {sportCourts.ends_at.getHours()}:{sportCourts.ends_at.getMinutes()}</p> */}
                           <p className="card-text">Status da Reserva: <strong>{(sportCourts.status == "accepted" ? "Aprovada" : (sportCourts.status == "pending" ? "Pendente" : (sportCourts.status == "denied" ? "Negado" : null)))}</strong></p>
                         </div>
                         {/* </a> */}

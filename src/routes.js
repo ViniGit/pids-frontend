@@ -34,13 +34,21 @@ import Login from "views/pages/Login.js";
 import ForgotPassWord from "views/pages/ForgotPassword";
 import Icons from "views/pages/Icons.js";
 
+import Notifications from "views/pages/notifications/Notifications";
 
 
 var routes = [
   {
+    path: "/notifications",
+    name: "Notificações",
+    icon: "ni ni-bell-55",
+    component: Notifications,
+    layout: "/admin",
+  },
+  {
     path: "/index",
-    name: "Home",
-    icon: "ni ni-tv-2 text-ueg",
+    name: "Reservas Pendentes",
+    icon: "ni ni-watch-time text-ueg",
     component: Index,
     layout: "/admin",
     show: true
@@ -48,7 +56,7 @@ var routes = [
   {
     path: "/list-all-reserves",
     name: "Listagem de Reservas",
-    icon: "ni ni-circle-08 text-pink",
+    icon: "ni ni-folder-17 text-pink",
     component: ListAllReserves,
     layout: "/admin",
     show: true
@@ -75,13 +83,14 @@ var routes = [
     component: ReserveDetailsRom,
     layout: "/admin",
   },
-  {
-    path: "/icons",
-    name: "Icons",
-    icon: "ni ni-planet text-blue",
-    component: Icons,
-    layout: "/admin",
-  },
+  // {
+  //   path: "/icons",
+  //   name: "Icons",
+  //   icon: "ni ni-planet text-blue",
+  //   component: Icons,
+  //   layout: "/admin",
+  //   show: true
+  // },
   // {
   //   path: "/maps",
   //   name: "Maps",
@@ -151,7 +160,7 @@ var routes = [
   {
     path: "/create-room",
     name: "Cadastro de Salas",
-    icon: "ni ni-shop text-warning",
+    icon: "ni ni-shop ",
     component: RegisterRoom,
     layout: "/admin",
     show: true
@@ -160,7 +169,7 @@ var routes = [
   {
     path: "/list-rooms",
     name: "Listagem de Salas",
-    icon: "ni ni-bullet-list-67 text-warning",
+    icon: "ni ni-bullet-list-67 ",
     component: ListRooms,
     layout: "/admin",
     show: true

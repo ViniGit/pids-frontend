@@ -26,6 +26,17 @@ const AdminNavbar = (props) => {
   const { signOut } = useAuth();
   const { user } = useAuth();
 
+
+  function ConfirmLogout() {
+
+    var resultado = window.confirm("Deseja sair do sistema?");
+    if (resultado == true) {
+      signOut();
+    }
+    else {
+    }
+  }
+
   return (
     <>
       <Navbar className="navbar-top navbar-dark" expand="md" id="navbar-main">
@@ -53,27 +64,34 @@ const AdminNavbar = (props) => {
               <DropdownToggle className="pr-0" nav>
                 <Media className="align-items-center">
 
-                  <Media className="ml-2 d-none d-lg-block">
+                  <Media className="ml-2 d-none d-lg-block d-flex">
                     <span className="mb-0 text-sm font-weight-bold">
-                      {user.name}
+                      {user.name + ""}
+
                     </span>
                   </Media>
+                  <i className="ni ni-bold-down" />
                 </Media>
               </DropdownToggle>
               <DropdownMenu className="dropdown-menu-arrow" right>
                 {/* <DropdownItem className="noti-title" header tag="div">
                   <h6 className="text-overflow m-0">Welcome!</h6>
                 </DropdownItem> */}
-                <DropdownItem to="/admin/user-profile" tag={Link}>
+                {/* <DropdownItem to="/admin/user-profile" tag={Link}>
                   <i className="ni ni-single-02" />
                   <span>Meu Perfil</span>
+                </DropdownItem> */}
+                <DropdownItem to="/admin/notifications" tag={Link}>
+                  <i className="ni ni-bell-55" />
+                  <span>Notificações</span>
                 </DropdownItem>
-                <DropdownItem to="/admin/user-profile" tag={Link}>
+
+                {/* <DropdownItem to="/admin/user-profile" tag={Link}>
                   <i className="ni ni-settings-gear-65" />
                   <span>Configurações</span>
-                </DropdownItem>
+                </DropdownItem> */}
                 <DropdownItem divider />
-                <DropdownItem href="/auth/login" onClick={() => signOut()}>
+                <DropdownItem href="/auth/login" onClick={() => ConfirmLogout()}>
                   <i className="ni ni-user-run" />
                   <span>Logout</span>
                 </DropdownItem>

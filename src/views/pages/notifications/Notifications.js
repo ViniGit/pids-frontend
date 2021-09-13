@@ -6,7 +6,6 @@ import Chart from "chart.js";
 import { useAuth } from "Context/AuthContext";
 
 import "./style.css";
-
 import {
   BrowserRouter as Router,
   Switch,
@@ -14,7 +13,6 @@ import {
   Link,
   useHistory
 } from "react-router-dom";
-
 import {
   Badge,
   Card,
@@ -50,32 +48,35 @@ import {
   chartExample2,
 } from "variables/charts.js";
 
-import Header from "../../../components/Headers/ListHeader.js";
+import Header from "components/Headers/ListHeader.js";
 import getToken from '../../../functions/getToken';
-import { date } from 'yup/lib/locale';
-import CardSportCourts from '../../../components/card/sportCourts/CardSportCourts';
-import CardRooms from '../../../components/card/Rooms/CardRooms';
-import CardEquipments from '../../../components/card/Equipments/CardEquipments';
 
-const Index = (props) => {
+import CardNotifications from 'components/card/Notifications/CardEquipments';
+
+
+
+const Notifications = (props) => {
   const [activeNav, setActiveNav] = useState(1);
   const [chartExample1Data, setChartExample1Data] = useState("data1");
 
   const { user } = useAuth();
-  const [reserves, setReserves] = useState([{}]);
-  const [reserveEquipment, setReserveEquipment] = useState([{}]);
-  const [reserveRooms, setReserveRooms] = useState([{}]);
-  const [reserveSportCourts, setReserveSportCourts] = useState([{}]);
+  const [notifications, setNotifications] = useState([{}]);
+  const [reserveEquipment, setReserveEquipment] = useState([]);
+  const [reserveRooms, setReserveRooms] = useState([]);
+  const [reserveSportCourts, setReserveSportCourts] = useState([]);
   const history = useHistory();
 
   const config = getToken();
 
+
   useEffect(() => {
-    api.get('/reserves', config).then(response => {
-      console.log(response.data);
-      setReserves(response.data);
+    api.get('/messages/admin', config).then(response => {
+      setNotifications(response.data);
     })
   }, []);
+  if (window.Chart) {
+    parseOptions(Chart, chartOptions());
+  }
 
   function redirectDetailsReserveSportCourt(sportCourt) {
 
@@ -111,12 +112,13 @@ const Index = (props) => {
       <Header />
       <div className="mt-4 ml-3">
         <h4 className=" mb-4 pl-4">
-          SOLICITAÇÕES DE RESERVAS
+          NOTIFICAÇÕES
         </h4>
       </div>
-      {reserves.length == 0 ?
+
+      {notifications.length == 0 ?
         <div className="p-4">
-          < h4 className="p-3">Nenhuma reserva Registrada!</h4>
+          < h4 className="p-3">Não possui nenhuma Reserva Pendente!</h4>
         </div> :
         <Container className="mt--7 pt-8" fluid>
           <Row>
@@ -124,41 +126,16 @@ const Index = (props) => {
               < Card className="bg-secondary shadow" >
 
                 {
-                  reserves.map(reserve => (
 
-                    <div>
-                      {
-                        reserve.sport_court ?
-                          <div className="container d-flex d-sm-inline-flex " onClick={() => redirectDetailsReserveSportCourt(reserve)}>
-                            <CardSportCourts reserve={reserve}></CardSportCourts>
-                          </div>
-
-                          :
-                          null
-                      }
+                  notifications.map(notification => (
 
 
-                      {
-                        reserve.room ?
-                          <div className="container d-flex d-sm-inline-flex " onClick={() => redirectDetailsReserveRoom(reserve)}>
-                            <CardRooms reserve={reserve}></CardRooms>
-                          </div>
 
-                          :
-                          null
-                      }
-
-
-                      {
-                        reserve.equipment ?
-                          <div className="container d-flex d-sm-inline-flex " onClick={() => redirectDetailsReserveEquipment(reserve)}>
-                            <CardEquipments reserve={reserve}></CardEquipments>
-                          </div>
-
-                          :
-                          null
-                      }
+                    <div className="container d-flex d-sm-inline-flex " >
+                      <CardNotifications notification={notification}></CardNotifications>
                     </div>
+
+
 
                   ))}
               </Card>
@@ -173,4 +150,4 @@ const Index = (props) => {
   );
 };
 
-export default Index;
+export default Notifications;

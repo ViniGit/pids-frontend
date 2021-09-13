@@ -125,40 +125,42 @@ const Index = (props) => {
         <Container className="mt--7 pt-8" fluid>
           <Row>
             <Col className="order-xl-1" xl="10">
-              {
-                reserves.map(reserve => (
+              < Card className="bg-secondary shadow" >
 
-                  < Card className="bg-secondary shadow" >
+                {
+                  reserves.map(reserve => (
 
-                    {reserve.sport_court ?
-                      <div className="container d-flex d-sm-inline-flex " onClick={() => redirectDetailsReserveSportCourt(reserve)}>
-                        <CardSportCourts reserve={reserve}></CardSportCourts>
-                      </div>
+                    <div>
+                      {reserve.sport_court ?
+                        <div className="container d-flex d-sm-inline-flex " onClick={() => redirectDetailsReserveSportCourt(reserve)}>
+                          <CardSportCourts reserve={reserve}></CardSportCourts>
+                        </div>
 
-                      :
-                      null}
-
-
-                    {reserve.room ?
-                      <div className="container d-flex d-sm-inline-flex " onClick={() => redirectDetailsReserveRoom(reserve)}>
-                        <CardRooms reserve={reserve}></CardRooms>
-                      </div>
-
-                      :
-                      null}
+                        :
+                        null}
 
 
-                    {reserve.equipment ?
-                      <div className="container d-flex d-sm-inline-flex " onClick={() => redirectDetailsReserveEquipment(reserve)}>
-                        <CardEquipments reserve={reserve}></CardEquipments>
-                      </div>
+                      {reserve.room ?
+                        <div className="container d-flex d-sm-inline-flex " onClick={() => redirectDetailsReserveRoom(reserve)}>
+                          <CardRooms reserve={reserve}></CardRooms>
+                        </div>
 
-                      :
-                      null}
+                        :
+                        null}
 
 
-                  </Card>
-                ))}
+                      {reserve.equipment ?
+                        <div className="container d-flex d-sm-inline-flex " onClick={() => redirectDetailsReserveEquipment(reserve)}>
+                          <CardEquipments reserve={reserve}></CardEquipments>
+                        </div>
+
+                        :
+                        null}
+                    </div>
+
+                  ))}
+              </Card>
+
             </Col>
           </Row>
 

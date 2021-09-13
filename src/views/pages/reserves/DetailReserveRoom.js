@@ -115,7 +115,7 @@ const DetailReserveRoom = (props) => {
 
                 < Card className="bg-secondary shadow" >
 
-                  <div className="container d-flex d-sm-inline-flex" >
+                  <div className="container2 d-flex d-sm-inline-flex" >
 
                     {room.status ?
                       <div className={`card w-50 m-2 `}>
@@ -127,8 +127,8 @@ const DetailReserveRoom = (props) => {
                           <p className="card-text">Solicitante: <strong>{room.user.name}</strong></p>
                           <p className="card-text">E-mail: <strong>{room.user.email}</strong></p>
                           <p className="card-text">CPF: <strong>{room.user.cpf}</strong></p>
-                          <p className="card-text">De: {`${room.starts_at.getDate()}/${room.starts_at.getMonth()}/${room.starts_at.getFullYear()}`} Horário: {room.starts_at.getHours()}:{room.starts_at.getMinutes()}</p>
-                          <p className="card-text">Até: {`${room.ends_at.getDate()}/${room.ends_at.getMonth()}/${room.ends_at.getFullYear()}`} Horário: {room.ends_at.getHours()}:{room.ends_at.getMinutes()}</p>
+                          <p className="card-text">Data: {`${room.starts_at.getDate()}/${room.starts_at.getMonth()}/${room.starts_at.getFullYear()}`} Horário: {room.starts_at.getHours()}:{room.starts_at.getMinutes()}</p>
+                          {/* <p className="card-text">Até: {`${room.ends_at.getDate()}/${room.ends_at.getMonth()}/${room.ends_at.getFullYear()}`} Horário: {room.ends_at.getHours()}:{room.ends_at.getMinutes()}</p> */}
                           <p className="card-text">Status da Reserva: <strong>{(room.status == "accepted" ? "Aprovada" : (room.status == "pending" ? "Pendente" : (room.status == "denied" ? "Negado" : null)))}</strong></p>
                         </div>
                         {/* </a> */}
